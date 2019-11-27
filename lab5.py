@@ -1,14 +1,16 @@
 import arcpy
 from classes import *
+from a_star import *
+from heuristic import *
 
-arcpy.env.workspace = "C:\\Users\\annas\\Documents\\3_rok\\PAG\\jezdnie"
+arcpy.env.workspace = "C:\\3rok\\sem5\\PAG2\\pag"
 '''
 for fc in arcpy.ListFeatureClasses():
 	print("{0},{1}".format(fc,arcpy.GetCount_management(fc)))
 '''
-in_features = "L4_1_BDOT10k__OT_SKJZ_L.shp"
+in_features = "jezdnie_nasze.shp"
 
-cursor = arcpy.SearchCursor("L4_1_BDOT10k__OT_SKJZ_L.shp")
+cursor = arcpy.SearchCursor(in_features)
 
 g = Graf()
 for row in cursor:
@@ -32,12 +34,14 @@ for row in cursor:
 		g.node[n_end.id] = n_end
 	g.node[n_end.id].edges.append(e)
 	
-		
-for i in range(0,10):
+'''	
+for i in range(0,len(g.edge)):
 	#g.edge[i].fromNode.print_node()
 	#g.edge[i].toNode.print_node()
 	g.node[str(g.edge[i].fromNode.x)+','+str(g.edge[i].fromNode.y)].print_node()
-	
+'''
+A_star(g, g.node[str(g.edge[0].fromNode.x)+','+str(g.edge[0].fromNode.y)], g.node[str(g.edge[4].fromNode.x)+','+str(g.edge[4].fromNode.y)])
+
 print('end')
 '''
 arcpy.AddField_management(in_features, 'start_x', 'double')

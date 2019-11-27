@@ -9,6 +9,9 @@ class Graf:
 		print('edges: ')
 		for i in range(0,len(self.edge)):
 			self.edge[i].print_edge()
+			
+	#def find_node(self, id):
+	#	return node[id]
 
 class Node:
 	def __init__(self):
@@ -16,7 +19,7 @@ class Node:
 		self.y = 0
 		self.h = 0
 		self.id = 0
-		self.edges = []
+		self.edges = [] #sasiedzi
 		self.f = 0
 		self.final_cost = 0
 		
