@@ -1,0 +1,4 @@
+1. Koszty (od czasu i odległości)
+2. Poprawić heurystykę
+3. Alternatywna trasa
+4. Implementacja w ArcMapie
