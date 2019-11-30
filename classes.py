@@ -1,10 +1,11 @@
+# -*- coding: utf-8 -*-
 class Graf:
 	edge = []
 	node = {}
 	def print_graf(self):
 		print('nodes: ')
-		for i in range(0,len(self.node)):
-			self.node[i].print_node()
+		for key in self.node:
+			self.node[key].print_node()
 			
 		print('edges: ')
 		for i in range(0,len(self.edge)):
@@ -22,10 +23,10 @@ class Node:
 		self.edges = [] #sasiedzi
 		self.f = 0
 		self.final_cost = 0
-		
+	'''	
 	def count_h(self):
-		self.h = self.x + self.y
-	
+		heuristic_euc_dist(node1_x, node1_y, node2_x, node2_y, Dist):
+	'''
 	def print_node(self):
 		print('Node (id, x, y, h):')
 		print(self.id, self.x, self.y, self.h)
