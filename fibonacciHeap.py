@@ -43,14 +43,6 @@ class FibonacciHeap:
     def extract_min(self):
 		if self.least != None:
 			sprig = self.least                                   #najmniejsze drzewko
-			'''
-			if self.count == 1:
-				print("jedna wartosc")
-				self.trees.remove(sprig)
-			elif self.count == 0:
-				print("empty set")
-			else:
-			'''
 			for child in sprig.children:                         #dodaj dzieci usuwanego drzewa do drzew kopca
 				self.trees.append(child)
 				
@@ -89,18 +81,3 @@ class FibonacciHeap:
 				self.trees.append(k)
 				if (self.least is None or k.key < self.least.key):
 					self.least = k
-
-'''  
-heap = FibonacciHeap()
-heap.insert(1)
-heap.insert(2)
-heap.insert(29)
-heap.insert(0)
-heap.insert(5)
-heap.insert(5)
-heap.reorder()
-
-print(heap.extract_min())
-print(heap.trees)
-print(heap.extract_min())
-'''

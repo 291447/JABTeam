@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 class Graf:
-	edge = []
+	edge = {}
 	node = {}
+	
 	def print_graf(self):
 		print('nodes: ')
 		for key in self.node:
@@ -10,23 +11,15 @@ class Graf:
 		print('edges: ')
 		for i in range(0,len(self.edge)):
 			self.edge[i].print_edge()
-			
-	#def find_node(self, id):
-	#	return node[id]
 
 class Node:
 	def __init__(self):
 		self.x = 0
 		self.y = 0
-		self.h = 0
 		self.id = 0
 		self.edges = [] #sasiedzi
-		self.f = 0
-		self.final_cost = 0
-	'''	
-	def count_h(self):
-		heuristic_euc_dist(node1_x, node1_y, node2_x, node2_y, Dist):
-	'''
+		#self.final_cost = 0
+
 	def print_node(self):
 		print('Node (id, x, y, h):')
 		print(self.id, self.x, self.y, self.h)
@@ -45,49 +38,39 @@ class Node:
 	'''
 
 class Edge:
-	#IDENTYFIKATOR W RAZIE CZEGO
+	id = -1
 	fromNode = Node()
 	toNode = Node()
 	cost = 0.0
-	length = 0
-	velocity = 0
+	length = 0.0
+	cur_length = 0.0
+	velocity = 0.0
+	time_of_travel = 0.0
+	alt_velocity = 0.0
+	alt_length = 0.0
+	
+	def count_time_of_travel(self, klasa):
+		if klasa == 'A':
+			self.velocity = 120
+		elif klasa == 'S':
+			self.velocity = 90
+		elif klasa == 'GP':
+			self.velocity = 80
+		elif klasa == 'G':
+			self.velocity = 60
+		elif klasa == 'Z':
+			self.velocity = 50
+		elif klasa == 'L':
+			self.velocity = 20
+		elif klasa == 'I':
+			self.velocity = 10
+		elif klasa == 'D':
+			self.velocity = 10
+		else:
+			self.velocity = 50
+		
+	def count_actual_time_of_travel(self, vel):
+		self.time_of_travel = 3.6 * self.length / vel
 	
 	def print_edge(self):
 		print('From: ', self.fromNode.id, 'To: ', self.toNode.id, 'Cost: ',self.cost, 'Length: ',self.length)
-		
-class NodeQ:
-
-    def __init__(self, data=None, next=None):
-        self.data = data
-        self.next = next
-
-    def __str__(self):
-        return str(self.data)
-
-class PriorityQueue:
-
-    def __init__(self):
-        self.head = None
-
-    def is_empty(self):
-        return not self.head
-
-    def insert(self, data):
-        node = NodeQ(data)
-        before = None
-        after = self.head
-        while after:
-            if after.data.f >= node.data.f: break
-            before = after
-            after = after.next
-        if before is None:
-            node.next = self.head
-            self.head = node
-        else:
-            node.next = before.next
-            before.next = node
-
-    def remove(self):
-        data = self.head.data
-        self.head = self.head.next
-        return data
