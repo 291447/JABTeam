@@ -46,10 +46,11 @@ class Edge:
 	cur_length = 0.0
 	velocity = 0.0
 	time_of_travel = 0.0
+	cur_time_of_travel = 0.0
 	alt_velocity = 0.0
 	alt_length = 0.0
 	
-	def count_time_of_travel(self, klasa):
+	def count_velocity(self, klasa):
 		if klasa == 'A':
 			self.velocity = 120
 		elif klasa == 'S':
@@ -69,8 +70,12 @@ class Edge:
 		else:
 			self.velocity = 50
 		
-	def count_actual_time_of_travel(self, vel):
-		self.time_of_travel = 3.6 * self.length / vel
+	def count_time_of_travel(self, vel, param):
+		#param = 'real' - mamy obliczyć właściwy czas
+		#param = 'alt' - mamy obliczyć zmieniony czas
+		self.cur_time_of_travel = 3.6 * self.length / vel
+		if param == 'real':
+			self.time_of_travel = self.cur_time_of_travel
 	
 	def print_edge(self):
 		print('From: ', self.fromNode.id, 'To: ', self.toNode.id, 'Cost: ',self.cost, 'Length: ',self.length)

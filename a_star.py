@@ -3,7 +3,26 @@ from classes import *
 from fibonacciHeap import *
 from heuristic import *
 
+def get_closest(node, list_of_nodes):
+	node2_x, node2_y = node.split(',')
+	node2_x = float(node2_x)
+	node2_y = float(node2_y)
+	#print(node2_x, node2_y)
+	minLen = 999999999999999
+	for id, nd in list_of_nodes.items():
+		node1_x = nd.x
+		node1_y = nd.y
+		len = heuristic_euc(node1_x, node1_y, node2_x, node2_y)
+		if len < minLen:
+			minLen = len
+			node = nd
+	return node
+
 def A_star(graf, start, end, param):
+	if (start or end not in graf.node):
+		start = get_closest(start, graf.node)
+		end = get_closest(end, graf.node)
+
 	visited = set()
 	visited.add(start.id)
 	
@@ -37,7 +56,7 @@ def A_star(graf, start, end, param):
 			
 			if nextEdge.toNode.id not in g_score:
 				if param == 1:
-					g_score[nextEdge.toNode.id] = g_score[prevNode.id] + nextEdge.time_of_travel
+					g_score[nextEdge.toNode.id] = g_score[prevNode.id] + nextEdge.cur_time_of_travel
 				else:
 					g_score[nextEdge.toNode.id] = g_score[prevNode.id] + nextEdge.cur_length
 				#cameFrom[nextEdge.toNode.id] = prevNode.id
@@ -46,7 +65,7 @@ def A_star(graf, start, end, param):
 			else:
 				prev_g = g_score[nextEdge.toNode.id]
 				if param == 1:
-					cur_g = g_score[prevNode.id] + nextEdge.time_of_travel
+					cur_g = g_score[prevNode.id] + nextEdge.cur_time_of_travel
 				else:
 					cur_g = g_score[prevNode.id] + nextEdge.cur_length
 				if cur_g < prev_g:
@@ -62,7 +81,7 @@ def A_star(graf, start, end, param):
 						nodeid = graf.edge[id].toNode.id
 						fromnodeid = graf.edge[id].fromNode.id
 						if (nodeid == nextEdge.toNode.id and nextEdge.fromNode.id == fromnodeid):
-							if ((param == 0 and nextEdge.cur_length > graf.edge[id].cur_length) or (param == 1 and nextEdge.time_of_travel > graf.edge[id].time_of_travel)):
+							if ((param == 0 and nextEdge.cur_length > graf.edge[id].cur_length) or (param == 1 and nextEdge.cur_time_of_travel > graf.edge[id].cur_time_of_travel)):
 								if_cypel = 1
 								continue
 				if if_cypel == 1:
@@ -117,13 +136,27 @@ def A_star(graf, start, end, param):
 		path.append(nd)
 		l = nd
 	'''
+	
 	k = prevEdge
-	while cameFrom_edge[k] != None:
-		ed = cameFrom_edge[k]
-		path.append(ed)
-		k = ed
+	total = 0
+	
+	if param == 0:
+		while cameFrom_edge[k] != None:
+			ed = cameFrom_edge[k]
+			total += graf.edge[ed].length
+			path.append(ed)
+			k = ed
+		total += graf.edge[prevEdge].length
+	else:
+		while cameFrom_edge[k] != None:
+			ed = cameFrom_edge[k]
+			total += graf.edge[ed].time_of_travel
+			path.append(ed)
+			k = ed
+		total += graf.edge[prevEdge].time_of_travel
+	
 
 	path.reverse()
 	path.append(prevEdge)
 	
-	return (path, i)
+	return (path, i, total)
