@@ -1,5 +1,5 @@
 from a_star import *
-def alt_path(prev_path, graf, param):
+def alt_path(prev_path, graf, param, start, end):
 	if param == 1:
 		for edge_id in prev_path:
 			#print(graf.edge[edge_id].length)
@@ -10,5 +10,5 @@ def alt_path(prev_path, graf, param):
 		for edge_id in prev_path:
 			graf.edge[edge_id].alt_length = graf.edge[edge_id].length * 1.05
 			graf.edge[edge_id].cur_length = graf.edge[edge_id].alt_length
-	path, i, path_edge = A_star(graf, graf.node['464430.25,572320.14'], graf.node['481488.72,574638.42'], param)
-	return path, i, path_edge
+	path, i= A_star(graf, start, end, param)
+	return path, i

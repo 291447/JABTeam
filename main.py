@@ -5,9 +5,15 @@ from create_graf import *
 from alt_path import *
 import time
 
+start = '464430.25,572320.14'
+end = '481488.72,574638.42'
+'''
+start = '464430.25,572320.14'
+end = '482347.92,575393.13'
+'''
 search_start_time = time.time()
-arcpy.env.workspace = "C:\\3rok\\sem5\\PAG2\\pag\\projekt\\Torun_jezdnie"
-#arcpy.env.workspace = "C:\\Users\\annas\\Documents\\3_rok\\PAG\\blok1\\projekt\\Torun_jezdnie"
+#arcpy.env.workspace = "C:\\3rok\\sem5\\PAG2\\pag\\projekt\\Torun_jezdnie"
+arcpy.env.workspace = "C:\\Users\\annas\\Documents\\3_rok\\PAG\\blok1\\projekt\\Torun_jezdnie"
 in_features = "L4_1_BDOT10k__OT_SKJZ_L.shp"
 cursor = arcpy.SearchCursor(in_features)
 print("--- %s seconds ---" % (time.time() - search_start_time))
@@ -15,59 +21,57 @@ print("--- %s seconds ---" % (time.time() - search_start_time))
 graf_start_time = time.time()
 graf = create_graf(cursor)
 print("--- %s seconds ---" % (time.time() - graf_start_time))
-print(len(graf.node))
 
 A_Star_start_time = time.time()
+#0 - dlugosc
+#1 - czas
 param = 0
-path, i, path_edge = A_star(graf, graf.node['464430.25,572320.14'], graf.node['481488.72,574638.42'], param)
-print("--- %s seconds ---" % (time.time() - A_Star_start_time))
+outcome = A_star(graf, graf.node[start], graf.node[end], param)
+if outcome == 0:
+	print ('Path not found')
+else:
+	path, i = outcome
+	print("--- %s seconds ---" % (time.time() - A_Star_start_time))
+	expression = ""
+	for single in path:
+		if single != path[len(path) - 1]:
+			expression = expression + '"FID" = ' + single + " OR "
+		else:
+			expression = expression + '"FID" = ' + single
+			
+	where_clause = expression
 
-#print(path, "liczba iter: ", i, "dlugosc sciezki: ", len(path), path_edge, len(path_edge))
+	arcpy.env.overwriteOutput = True
+	arcpy.Select_analysis("C:\\Users\\annas\\Documents\\3_rok\\PAG\\blok1\\projekt\\Torun_jezdnie\\L4_1_BDOT10k__OT_SKJZ_L.shp", "C:\\Users\\annas\\Documents\\3_rok\\PAG\\blok1\\projekt\\shortest_path.shp", where_clause)
 
-expression = ""
-for single in path_edge:
-	if single != path_edge[len(path_edge) - 1]:
-		expression = expression + '"FID" = ' + single + " OR "
-	else:
-		expression = expression + '"FID" = ' + single
-		
-where_clause = expression
+	arcpy.CreateFeatureclass_management('C:\\Users\\annas\\Documents\\3_rok\\PAG\\blok1\\projekt\\', 'nody.shp', 'POLYLINE')
+	'''
+	fc = 'C:\\Users\\annas\\Documents\\3_rok\\PAG\\blok1\\projekt\\nody.shp'
+	cursor = arcpy.da.InsertCursor(fc, ["SHAPE@"])
+	array_of_points = []
+	for point in path:
+		pt = point.split(',')
+		pt_x = float(pt[0])
+		pt_y = float(pt[1])
+		array_of_points.append(arcpy.Point(pt_x, pt_y))
+	arcpy_array = arcpy.Array(array_of_points)
+	spatial_reference = arcpy.SpatialReference(2180)
+	polyline = arcpy.Polyline(arcpy_array, spatial_reference)
+	cursor.insertRow([polyline])
+	'''
+	alt_path, alt_i = alt_path(path, graf, param, graf.node[start], graf.node[end])
 
-#print(where_clause)
-arcpy.env.overwriteOutput = True
-arcpy.Select_analysis("C:\\3rok\\sem5\\PAG2\\pag\\projekt\\Torun_jezdnie\\L4_1_BDOT10k__OT_SKJZ_L.shp", "C:\\3rok\\sem5\\PAG2\\pag\\projekt\\shortest_path.shp", where_clause)
+	expression = ""
+	for single in alt_path:
+		if single != alt_path[len(alt_path) - 1]:
+			expression = expression + '"FID" = ' + single + " OR "
+		else:
+			expression = expression + '"FID" = ' + single
+			
+	where_clause = expression
 
-arcpy.CreateFeatureclass_management('C:\\3rok\\sem5\\PAG2\\pag\\projekt', 'droga.shp', 'POLYLINE')
-
-fc = 'C:\\3rok\\sem5\\PAG2\\pag\\projekt\\droga.shp'
-cursor = arcpy.da.InsertCursor(fc, ["SHAPE@"])
-array_of_points = []
-for point in path:
-	pt = point.split(',')
-	pt_x = float(pt[0])
-	pt_y = float(pt[1])
-	array_of_points.append(arcpy.Point(pt_x, pt_y))
-	#array = arcpy.Array([arcpy.Point(-77.4349451, 37.5408265),
-	#					 arcpy.Point(-78.6384349, 35.7780943)])
-arcpy_array = arcpy.Array(array_of_points)
-spatial_reference = arcpy.SpatialReference(2180)
-polyline = arcpy.Polyline(arcpy_array, spatial_reference)
-cursor.insertRow([polyline])
-
-alt_path, alt_i, alt_path_edge = alt_path(path_edge, graf, param)
-
-expression = ""
-for single in alt_path_edge:
-	if single != alt_path_edge[len(alt_path_edge) - 1]:
-		expression = expression + '"FID" = ' + single + " OR "
-	else:
-		expression = expression + '"FID" = ' + single
-		
-where_clause = expression
-
-#print(where_clause)
-arcpy.env.overwriteOutput = True
-arcpy.Select_analysis("C:\\3rok\\sem5\\PAG2\\pag\\projekt\\Torun_jezdnie\\L4_1_BDOT10k__OT_SKJZ_L.shp", "C:\\3rok\\sem5\\PAG2\\pag\\projekt\\alt_path.shp", where_clause)
+	arcpy.env.overwriteOutput = True
+	arcpy.Select_analysis("C:\\Users\\annas\\Documents\\3_rok\\PAG\\blok1\\projekt\\Torun_jezdnie\\L4_1_BDOT10k__OT_SKJZ_L.shp", "C:\\Users\\annas\\Documents\\3_rok\\PAG\\blok1\\projekt\\alt_path.shp", where_clause)
 
 '''
 arcpy.AddField_management(in_features, 'start_x', 'double')
